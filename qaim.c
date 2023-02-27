@@ -35,7 +35,6 @@
 #define uint uint
 uint sd = 28;
 uint sd2 = 14;
-float input[2352] = {0}; // 2352 = max scan area 28x28
 uint sps = 0;
 
 Display *d;
