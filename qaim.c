@@ -5,7 +5,9 @@
         FEBRUARY 2023
         ~~~~~~~~~~~~~
 
-    Set enemy outline to "Target" and outline color to red
+    Quake Champions Trigger Bot
+
+    Set enemy outline to "Target" and enemy outline color to red.
     
     Prereq:
     sudo apt install clang xterm espeak libx11-dev libxdo-dev libespeak-dev
@@ -33,22 +35,17 @@
 #pragma GCC diagnostic ignored "-Wunused-result"
 
 #define SCAN_DELAY 1000
-#define ACTIVATION_SENITIVITY 0.97f
-#define REPEAT_ACTIVATION 0
-
 #define uint uint
 uint sd = 28;
 uint sd2 = 14;
-
 float input[2352] = {0}; // 2352 = max scan area 28x28
-uint sps = 0; // for SPS
+uint sps = 0;
 
 Display *d;
 int si;
 Window twin;
 Window this_win = 0;
 uint x=0, y=0;
-uint tc = 0;
 
 uint minimal = 0;
 uint enable = 0;
@@ -59,17 +56,16 @@ uint hotkeys = 1;
 /***************************************************
    ~~ Utils
 */
-//https://www.cl.cam.ac.uk/~mgk25/ucs/keysymdef.h
-//https://stackoverflow.com/questions/18281412/check-keypress-in-c-on-linux/52801588
 int key_is_pressed(KeySym ks)
 {
+    // https://www.cl.cam.ac.uk/~mgk25/ucs/keysymdef.h
+    // https://stackoverflow.com/questions/18281412/check-keypress-in-c-on-linux/52801588
     char keys_return[32];
     XQueryKeymap(d, keys_return);
     KeyCode kc2 = XKeysymToKeycode(d, ks);
     int isPressed = !!(keys_return[kc2 >> 3] & (1 << (kc2 & 7)));
     return isPressed;
 }
-
 uint64_t microtime()
 {
     struct timeval tv;
@@ -78,7 +74,6 @@ uint64_t microtime()
     gettimeofday(&tv, &tz);
     return 1000000 * tv.tv_sec + tv.tv_usec;
 }
-
 uint espeak_fail = 0;
 void speakS(const char* text)
 {
@@ -98,7 +93,6 @@ void speakS(const char* text)
 /***************************************************
    ~~ X11 Utils
 */
-
 Window getWindow(Display* d, const int si) // gets child window mouse is over
 {
     XEvent event;
@@ -112,7 +106,6 @@ Window getWindow(Display* d, const int si) // gets child window mouse is over
     }
     return event.xbutton.window;
 }
-
 Window findWindow(Display *d, Window current, char const *needle)
 {
     Window ret = 0, root, parent, *children;
@@ -148,7 +141,6 @@ Window findWindow(Display *d, Window current, char const *needle)
     }
     return ret;
 }
-
 #define _NET_WM_STATE_REMOVE 0
 #define _NET_WM_STATE_ADD    1
 #define _NET_WM_STATE_TOGGLE 2 
@@ -178,7 +170,6 @@ Bool MakeAlwaysOnTop(Display* display, Window root, Window mywin)
     }
     return False;
 }
-
 Window getNextChild(Display* d, Window current)
 {
     uint cc = 0;
@@ -190,13 +181,12 @@ Window getNextChild(Display* d, Window current)
     //printf("%lX\n", children[i]);
     return rw;
 }
-
-float processModel()
+uint isEnemy()
 {
     // get image block
     XImage *img = XGetImage(d, twin, x-sd2, y-sd2, sd, sd, AllPlanes, XYPixmap);
     if(img == NULL)
-        return 0.f;
+        return 0;
 
     // extract colour information
     int i = 0;
@@ -215,7 +205,7 @@ float processModel()
                 // done
                 XDestroyImage(img);
                 sps++;
-                return 1.f;
+                return 1;
             }
             
             i++;
@@ -225,7 +215,7 @@ float processModel()
     // done
     XDestroyImage(img);
     sps++;
-    return 0.f;
+    return 0;
 }
 
 /***************************************************
@@ -494,7 +484,7 @@ int main(int argc, char *argv[])
                     }
                 }
 
-                // scan size toggle
+                // scan size flippening
                 if(key_is_pressed(XK_F))
                 {
                     if(sd == 28)
@@ -506,29 +496,18 @@ int main(int argc, char *argv[])
                 }
             }
 
-            const float activation = processModel();
-            if(activation >= ACTIVATION_SENITIVITY)
+            if(isEnemy() == 1)
             {
-                tc++;
+                xdo_mouse_down(xdo, CURRENTWINDOW, 1);
+                usleep(100000); // or cheating ban
+                xdo_mouse_up(xdo, CURRENTWINDOW, 1);
 
-                // did we activate enough times in a row to be sure this is a target?
-                if(tc > REPEAT_ACTIVATION)
+                // display ~1s recharge time
+                if(crosshair != 0)
                 {
-                    xdo_mouse_down(xdo, CURRENTWINDOW, 1);
-                    usleep(100000); // or cheating ban
-                    xdo_mouse_up(xdo, CURRENTWINDOW, 1);
-
-                    // display ~1s recharge time
-                    if(crosshair != 0)
-                    {
-                        crosshair = 2;
-                        ct = time(0);
-                    }
+                    crosshair = 2;
+                    ct = time(0);
                 }
-            }
-            else
-            {
-                tc = 0;
             }
 
             if(crosshair == 1)
