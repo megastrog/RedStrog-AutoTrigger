@@ -28,9 +28,6 @@
 #include <xdo.h>
 #include <espeak/speak_lib.h>
 
-#include "k2c_include.h" 
-#include "k2c_tensor_include.h" 
-
 #pragma GCC diagnostic ignored "-Wgnu-folding-constant"
 #pragma GCC diagnostic ignored "-Wunused-result"
 
