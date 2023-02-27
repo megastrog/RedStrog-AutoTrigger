@@ -31,7 +31,7 @@
 #pragma GCC diagnostic ignored "-Wgnu-folding-constant"
 #pragma GCC diagnostic ignored "-Wunused-result"
 
-#define SCAN_DELAY 1000
+#define SCAN_DELAY 4000
 #define uint uint
 uint sd = 28;
 uint sd2 = 14;
