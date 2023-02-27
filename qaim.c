@@ -48,7 +48,6 @@ uint enable = 0;
 uint crosshair = 1;
 uint hotkeys = 1;
 
-
 /***************************************************
    ~~ Utils
 */
