@@ -184,7 +184,6 @@ uint isEnemy()
         return 0;
 
     // extract colour information
-    int i = 0;
     for(int y = 0; y < sd; y++)
     {
         for(int x = 0; x < sd; x++)
@@ -202,8 +201,6 @@ uint isEnemy()
                 sps++;
                 return 1;
             }
-            
-            i++;
         }
     }
 
