@@ -28,10 +28,7 @@
 #include <xdo.h>
 #include <espeak/speak_lib.h>
 
-#pragma GCC diagnostic ignored "-Wgnu-folding-constant"
-#pragma GCC diagnostic ignored "-Wunused-result"
-
-#define SCAN_DELAY 9000
+#define SCAN_DELAY 1000
 #define uint uint
 uint sd = 28;
 uint sd2 = 14;
@@ -47,6 +44,8 @@ uint minimal = 0;
 uint enable = 0;
 uint crosshair = 1;
 uint hotkeys = 1;
+
+//#define EFFICIENT_SCAN // uncommenting this may increase your SPS rate
 
 /***************************************************
    ~~ Utils
@@ -182,32 +181,115 @@ uint isEnemy()
     XImage *img = XGetImage(d, twin, x-sd2, y-sd2, sd, sd, AllPlanes, XYPixmap);
     if(img == NULL)
         return 0;
+    
+    // increment scans per second
+    sps++;
 
     // extract colour information
-    for(int y = 0; y < sd; y++)
+    uint c1 = 0;
+    for(int y = 0; y < sd2; y++)
     {
-        for(int x = 0; x < sd; x++)
+        for(int x = 0; x < sd2; x++)
         {
             const unsigned long pixel = XGetPixel(img, x, y);
             const unsigned char cr = (pixel & img->red_mask) >> 16;
             const unsigned char cg = (pixel & img->green_mask) >> 8;
             const unsigned char cb = pixel & img->blue_mask;
-
-            //if(cr > 230 && cg < 13 && cb < 13)
             if(cr > 220 && cg < 33 && cb < 33)
             {
-                // done
-                XDestroyImage(img);
-                sps++;
-                return 1;
+                c1=1;
+                break;
             }
         }
+        if(c1 == 1){break;}
     }
+#ifdef EFFICIENT_SCAN
+    if(c1 == 0)
+    {
+        XDestroyImage(img);
+        return 0;
+    }
+#endif
+    uint c2 = 0;
+    for(int y = sd2; y < sd; y++)
+    {
+        for(int x = 0; x < sd2; x++)
+        {
+            const unsigned long pixel = XGetPixel(img, x, y);
+            const unsigned char cr = (pixel & img->red_mask) >> 16;
+            const unsigned char cg = (pixel & img->green_mask) >> 8;
+            const unsigned char cb = pixel & img->blue_mask;
+            if(cr > 220 && cg < 33 && cb < 33)
+            {
+                c2=1;
+                break;
+            }
+        }
+        if(c2 == 1){break;}
+    }
+#ifdef EFFICIENT_SCAN
+    if(c2 == 0)
+    {
+        XDestroyImage(img);
+        return 0;
+    }
+#endif
+    uint c3 = 0;
+    for(int y = 0; y < sd2; y++)
+    {
+        for(int x = sd2; x < sd; x++)
+        {
+            const unsigned long pixel = XGetPixel(img, x, y);
+            const unsigned char cr = (pixel & img->red_mask) >> 16;
+            const unsigned char cg = (pixel & img->green_mask) >> 8;
+            const unsigned char cb = pixel & img->blue_mask;
+            {
+                c3=1;
+                break;
+            }
+        }
+        if(c3 == 1){break;}
+    }
+#ifdef EFFICIENT_SCAN
+    if(c3 == 0)
+    {
+        XDestroyImage(img);
+        return 0;
+    }
+#endif
+    uint c4 = 0;
+    for(int y = sd2; y < sd; y++)
+    {
+        for(int x = sd2; x < sd; x++)
+        {
+            const unsigned long pixel = XGetPixel(img, x, y);
+            const unsigned char cr = (pixel & img->red_mask) >> 16;
+            const unsigned char cg = (pixel & img->green_mask) >> 8;
+            const unsigned char cb = pixel & img->blue_mask;
+            if(cr > 220 && cg < 33 && cb < 33)
+            {
+                c4=1;
+                break;
+            }
+        }
+        if(c4 == 1){break;}
+    }
+#ifdef EFFICIENT_SCAN
+    if(c4 == 0)
+    {
+        XDestroyImage(img);
+        return 0;
+    }
+#endif
+
+#ifndef EFFICIENT_SCAN
+    if(c1+c2+c3+c4 < 3)
+        return 0;
+#endif
 
     // done
     XDestroyImage(img);
-    sps++;
-    return 0;
+    return 1;
 }
 
 /***************************************************
@@ -491,7 +573,7 @@ int main(int argc, char *argv[])
             if(isEnemy() == 1)
             {
                 xdo_mouse_down(xdo, CURRENTWINDOW, 1);
-                usleep(100000); // or cheating ban
+                usleep(10000); // or cheating ban
                 xdo_mouse_up(xdo, CURRENTWINDOW, 1);
 
                 // display ~1s recharge time
