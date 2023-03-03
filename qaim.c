@@ -434,7 +434,7 @@ int main(int argc, char *argv[])
         xdo_t* xdo;
         xdo = xdo_new_with_opened_display(d, NULL, 0);
         xdo_get_active_window(xdo, &this_win);
-        xdo_set_window_property(xdo, this_win, "WM_NAME", "RedStrogV1");
+        xdo_set_window_property(xdo, this_win, "WM_NAME", "RedStrogV2");
         xdo_set_window_size(xdo, this_win, 600, 1, 0);
         MakeAlwaysOnTop(d, XDefaultRootWindow(d), this_win);
     }
