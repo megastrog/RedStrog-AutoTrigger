@@ -23,7 +23,6 @@
 #include <time.h>
 #include <sys/time.h>
 #include <X11/Xutil.h>
-#include <sys/stat.h>
 
 #include <xdo.h>
 #include <espeak/speak_lib.h>
