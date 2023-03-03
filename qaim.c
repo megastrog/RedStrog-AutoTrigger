@@ -316,7 +316,7 @@ void reprint()
 
     if(minimal == 0)
     {
-        printf("\033[1m\033[0;31m>>> RedStrog Triggerbot v1 by MegaStrog <<<\e[0m\n");
+        printf("\033[1m\033[0;31m>>> RedStrog Triggerbot v2 by MegaStrog <<<\e[0m\n");
         rainbow_line_printf("original code by the loser below\n");
         rainbow_line_printf("James Cuckiam Fletcher (github.com/mrbid)\n\n");
         rainbow_line_printf("L-CTRL + L-ALT = Toggle BOT ON/OFF\n");
