@@ -28,7 +28,7 @@
 #include <espeak/speak_lib.h>
 
 #define SCAN_DELAY 1000
-#define uint uint
+#define uint unsigned int
 uint sd = 28;
 uint sd2 = 14;
 uint sps = 0;
