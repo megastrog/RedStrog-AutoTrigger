@@ -403,7 +403,6 @@ int main(int argc, char *argv[])
     //
 
     xdo_t* xdo;
-    XColor c[9];
     GC gc = 0;
     time_t ct = time(0);
 
