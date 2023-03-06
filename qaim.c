@@ -27,6 +27,8 @@
 #include <xdo.h>
 #include <espeak/speak_lib.h>
 
+//#define COLOR_DETECT cr > 220 && cg < 70 && cb < 70 // this will be for when the PTS goes live
+#define COLOR_DETECT cr > 220 && cg < 33 && cb < 33
 #define SCAN_DELAY 1000
 #define uint unsigned int
 uint sd = 28;
@@ -194,7 +196,7 @@ uint isEnemy()
             const unsigned char cr = (pixel & img->red_mask) >> 16;
             const unsigned char cg = (pixel & img->green_mask) >> 8;
             const unsigned char cb = pixel & img->blue_mask;
-            if(cr > 220 && cg < 33 && cb < 33)
+            if(COLOR_DETECT)
             {
                 c1=1;
                 break;
@@ -218,7 +220,7 @@ uint isEnemy()
             const unsigned char cr = (pixel & img->red_mask) >> 16;
             const unsigned char cg = (pixel & img->green_mask) >> 8;
             const unsigned char cb = pixel & img->blue_mask;
-            if(cr > 220 && cg < 33 && cb < 33)
+            if(COLOR_DETECT)
             {
                 c2=1;
                 break;
@@ -242,6 +244,7 @@ uint isEnemy()
             const unsigned char cr = (pixel & img->red_mask) >> 16;
             const unsigned char cg = (pixel & img->green_mask) >> 8;
             const unsigned char cb = pixel & img->blue_mask;
+            if(COLOR_DETECT)
             {
                 c3=1;
                 break;
@@ -265,7 +268,7 @@ uint isEnemy()
             const unsigned char cr = (pixel & img->red_mask) >> 16;
             const unsigned char cg = (pixel & img->green_mask) >> 8;
             const unsigned char cb = pixel & img->blue_mask;
-            if(cr > 220 && cg < 33 && cb < 33)
+            if(COLOR_DETECT)
             {
                 c4=1;
                 break;
